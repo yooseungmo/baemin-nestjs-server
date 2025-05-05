@@ -9,7 +9,7 @@
 ---
 
 > 이 프로젝트는 **배달의 민족**을 예제로 구현한 **NestJS** 기반 **MSA** 백엔드 시스템입니다.  
-> DDD, CQRS/SAGA, Event-Driven Architecture, gRPC, Kubernetes, Service Mesh, Terraform, CI/CD, 모니터링까지  
+> DDD, CQRS/SAGA, Event-Driven Architecture, gRPC, Kubernetes, Terraform, CI/CD, 모니터링까지  
 > 실제 운영 수준의 **마이크로서비스 아키텍처**를 단계적으로 설계 및 구현했습니다.
 
 ---
