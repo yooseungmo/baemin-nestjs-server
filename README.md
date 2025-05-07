@@ -71,7 +71,7 @@
 | ------------------- | ----------------------------------------------------- |
 | **Framework**       | NestJS                                                |
 | **Language**        | TypeScript                                            |
-| **Database**        | PostgreSQL (TypeORM)                                  |
+| **Database**        | PostgreSQL (TypeORM), MongoDB (mongoose)              |
 | **Messaging**       | RabbitMQ, Redis Pub/Sub                               |
 | **API Gateway**     | NestJS Gateway, gRPC                                  |
 | **Container & K8s** | Docker, Kubernetes, Helm                              |
