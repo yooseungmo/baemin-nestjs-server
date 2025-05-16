@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OrderModule } from 'apps/order/src/order/order.module';
 import * as Joi from 'joi';
@@ -20,6 +21,21 @@ import * as Joi from 'joi';
       inject: [ConfigService],
     }),
     OrderModule,
+    ClientsModule.registerAsync({
+      clients: [
+        {
+          name: 'USER_SERVICE',
+          useFactory: (_configService: ConfigService) => ({
+            transport: Transport.TCP,
+            options: {
+              host: 'user',
+              port: 3001,
+            },
+          }),
+          inject: [ConfigService],
+        },
+      ],
+    }),
   ],
 })
 export class AppModule {}
