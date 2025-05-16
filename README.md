@@ -162,3 +162,141 @@ baemin-nestjs-server
 이 프로젝트는 [MIT License](./LICENSE)에 따라 자유롭게 사용 가능합니다.
 
 ---
+
+```
+baemin-nestjs-server
+├─ .dockerignore
+├─ .prettierrc
+├─ README.md
+├─ apps
+│  ├─ notification
+│  │  ├─ Dockerfile
+│  │  ├─ src
+│  │  │  ├─ app.module.ts
+│  │  │  ├─ main.ts
+│  │  │  └─ notification
+│  │  │     ├─ entity
+│  │  │     │  └─ notification.entity.ts
+│  │  │     ├─ notification.controller.spec.ts
+│  │  │     ├─ notification.controller.ts
+│  │  │     ├─ notification.module.ts
+│  │  │     └─ notification.service.ts
+│  │  └─ tsconfig.app.json
+│  ├─ order
+│  │  ├─ Dockerfile
+│  │  ├─ src
+│  │  │  ├─ app.module.ts
+│  │  │  ├─ main.ts
+│  │  │  └─ order
+│  │  │     ├─ dto
+│  │  │     │  ├─ address.dto.ts
+│  │  │     │  ├─ create-order.dto.ts
+│  │  │     │  └─ payment.dto.ts
+│  │  │     ├─ entity
+│  │  │     │  ├─ customer.entity.ts
+│  │  │     │  ├─ delivery-address.entity.ts
+│  │  │     │  ├─ order.entity.ts
+│  │  │     │  ├─ payment.entity.ts
+│  │  │     │  └─ product.entity.ts
+│  │  │     ├─ exception
+│  │  │     │  ├─ payment-cancelled.exception.ts
+│  │  │     │  └─ payment-failed.exception.ts
+│  │  │     ├─ order.controller.spec.ts
+│  │  │     ├─ order.controller.ts
+│  │  │     ├─ order.module.ts
+│  │  │     └─ order.service.ts
+│  │  └─ tsconfig.app.json
+│  ├─ payment
+│  │  ├─ Dockerfile
+│  │  ├─ src
+│  │  │  ├─ app.module.ts
+│  │  │  ├─ main.ts
+│  │  │  └─ payment
+│  │  │     ├─ dto
+│  │  │     │  └─ make-payment.dto.ts
+│  │  │     ├─ entity
+│  │  │     │  └─ payment.entity.ts
+│  │  │     ├─ payment.controller.ts
+│  │  │     ├─ payment.module.ts
+│  │  │     └─ payment.service.ts
+│  │  └─ tsconfig.app.json
+│  ├─ product
+│  │  ├─ Dockerfile
+│  │  ├─ src
+│  │  │  ├─ app.module.ts
+│  │  │  ├─ main.ts
+│  │  │  └─ product
+│  │  │     ├─ dto
+│  │  │     │  └─ get-products-info.dto.ts
+│  │  │     ├─ entity
+│  │  │     │  └─ product.entity.ts
+│  │  │     ├─ product.controller.spec.ts
+│  │  │     ├─ product.controller.ts
+│  │  │     ├─ product.module.ts
+│  │  │     └─ product.service.ts
+│  │  └─ tsconfig.app.json
+│  └─ user
+│     ├─ Dockerfile
+│     ├─ src
+│     │  ├─ app.module.ts
+│     │  ├─ auth
+│     │  │  ├─ auth.controller.spec.ts
+│     │  │  ├─ auth.controller.ts
+│     │  │  ├─ auth.module.ts
+│     │  │  ├─ auth.service.spec.ts
+│     │  │  ├─ auth.service.ts
+│     │  │  ├─ decorator
+│     │  │  │  └─ authorization.decorator.ts
+│     │  │  └─ dto
+│     │  │     ├─ parse-bearer-token.dto.ts
+│     │  │     └─ register-dto.ts
+│     │  ├─ main.ts
+│     │  └─ user
+│     │     ├─ dto
+│     │     │  ├─ create-user-dto.ts
+│     │     │  └─ get-user-info.dto.ts
+│     │     ├─ entity
+│     │     │  └─ user.entity.ts
+│     │     ├─ user.controller.spec.ts
+│     │     ├─ user.controller.ts
+│     │     ├─ user.module.ts
+│     │     └─ user.service.ts
+│     └─ tsconfig.app.json
+├─ dist
+│  └─ apps
+│     ├─ notification
+│     │  ├─ main.js
+│     │  └─ main.js.map
+│     ├─ order
+│     │  ├─ main.js
+│     │  └─ main.js.map
+│     ├─ payment
+│     │  ├─ main.js
+│     │  └─ main.js.map
+│     ├─ product
+│     │  ├─ main.js
+│     │  └─ main.js.map
+│     └─ user
+│        ├─ main.js
+│        └─ main.js.map
+├─ docker-compose.yml
+├─ eslint.config.mjs
+├─ libs
+│  └─ common
+│     ├─ src
+│     │  ├─ const
+│     │  │  ├─ index.ts
+│     │  │  └─ services.ts
+│     │  ├─ index.ts
+│     │  └─ interceptor
+│     │     ├─ index.ts
+│     │     └─ rpc.interceptor.ts
+│     └─ tsconfig.lib.json
+├─ nest-cli.json
+├─ package.json
+├─ pnpm-lock.yaml
+├─ tsconfig.build.json
+├─ tsconfig.json
+└─ webpack.config.js
+
+```

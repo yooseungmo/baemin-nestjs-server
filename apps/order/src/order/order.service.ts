@@ -1,9 +1,17 @@
-import { PRODUCT_SERVICE, USER_SERVICE } from '@app/common';
+import { PAYMENT_SERVICE, PRODUCT_SERVICE, USER_SERVICE } from '@app/common';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { InjectModel } from '@nestjs/mongoose';
 import { CreateOrderDto } from 'apps/order/src/order/dto/create-order.dto';
 import { PaymentCancelledExcpetion } from 'apps/order/src/order/exception/payment-cancelled.exception';
+import { Model } from 'mongoose';
 import { lastValueFrom } from 'rxjs';
+import { AddressDto } from './dto/address.dto';
+import { PaymentDto } from './dto/payment.dto';
+import { Customer } from './entity/customer.entity';
+import { Order, OrderStatus } from './entity/order.entity';
+import { Product } from './entity/product.entity';
+import { PaymentFailedException } from './exception/payment-failed.exception';
 
 @Injectable()
 export class OrderService {
@@ -12,6 +20,10 @@ export class OrderService {
     private readonly userService: ClientProxy,
     @Inject(PRODUCT_SERVICE)
     private readonly productService: ClientProxy,
+    @Inject(PAYMENT_SERVICE)
+    private readonly paymentService: ClientProxy,
+    @InjectModel(Order.name)
+    private readonly orderModel: Model<Order>,
   ) {}
 
   async createOrder(createOrderDto: CreateOrderDto, token: string) {
@@ -29,9 +41,31 @@ export class OrderService {
     const user = await this.getUserFromToken(token);
 
     const products = await this.getProductByIds(productIds);
+
+    /// 3) 총 금액 계산하기
+    const totalAmount = this.calculateTotalAmount(products);
+
+    /// 4) 금액 검증하기 - total이 맞는지 (프론트에서 보내준 데이터랑)
+    this.validatePaymentAmount(totalAmount, payment.amount);
+
+    /// 5) 주문 생성하기 - 데이터베이스에 넣기
+    const customer = this.createCustomer(user);
+    const order = await this.createNewOrder(
+      customer,
+      products,
+      address,
+      payment,
+    );
+
+    /// 6) 결제 시도하기
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+    await this.processPayment(order._id.toString(), payment, user.email);
+
+    /// 7) 결과 반환하기
+    return this.orderModel.findById(order._id);
   }
 
-  async getUserFromToken(token: string) {
+  private async getUserFromToken(token: string) {
     // 1. User MS: JWT 검증
     const tRes = await lastValueFrom(
       this.userService.send({ cmd: 'parse_bearer_token' }, { token }),
@@ -54,7 +88,7 @@ export class OrderService {
     return uRes.data;
   }
 
-  async getProductByIds(productIds: string[]) {
+  private async getProductByIds(productIds: string[]): Promise<Product[]> {
     const res = await lastValueFrom(
       this.productService.send(
         { cmd: 'get_productst_info' },
@@ -74,5 +108,82 @@ export class OrderService {
       name: product.name,
       price: product.price,
     }));
+  }
+
+  private calculateTotalAmount(product: Product[]) {
+    return product.reduce((acc, next) => acc + next.price, 0);
+  }
+
+  private validatePaymentAmount(totalA: number, totalB: number) {
+    if (totalA !== totalB) {
+      throw new PaymentCancelledExcpetion('결제하려는 금액이 변경됐습니다!');
+    }
+  }
+
+  private createCustomer(user: { id: string; email: string; name: string }) {
+    return {
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+    };
+  }
+
+  private createNewOrder(
+    customer: Customer,
+    products: Product[],
+    deliveryAddress: AddressDto,
+    payment: PaymentDto,
+  ) {
+    return this.orderModel.create({
+      customer,
+      products,
+      deliveryAddress,
+      payment,
+    });
+  }
+
+  async processPayment(
+    orderId: string,
+    payment: PaymentDto,
+    userEmail: string,
+  ) {
+    try {
+      const resp = await lastValueFrom(
+        this.paymentService.send(
+          { cmd: 'make_payment' },
+          {
+            ...payment,
+            userEmail,
+          },
+        ),
+      );
+
+      if (resp.status === 'error') {
+        throw new PaymentFailedException(resp);
+      }
+
+      const isPaid = resp.data.paymentStatus === 'Approved';
+      const orderStatus = isPaid
+        ? OrderStatus.paymentProcessed
+        : OrderStatus.paymentFailed;
+
+      if (orderStatus === OrderStatus.paymentFailed) {
+        throw new PaymentFailedException(resp.error);
+      }
+
+      await this.orderModel.findByIdAndUpdate(orderId, {
+        status: OrderStatus.paymentProcessed,
+      });
+
+      return resp;
+    } catch (e) {
+      if (e instanceof PaymentFailedException) {
+        await this.orderModel.findByIdAndUpdate(orderId, {
+          status: OrderStatus.paymentFailed,
+        });
+      }
+
+      throw e;
+    }
   }
 }
