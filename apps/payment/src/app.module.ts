@@ -22,6 +22,7 @@ import * as Joi from 'joi';
       }),
       inject: [ConfigService],
     }),
+
     PaymentModule,
   ],
 })
