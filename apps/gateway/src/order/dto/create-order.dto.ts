@@ -4,10 +4,6 @@ import { Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
 export class CreateOrderDto {
-  @IsString()
-  @IsNotEmpty()
-  token: string;
-
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty({ each: true })

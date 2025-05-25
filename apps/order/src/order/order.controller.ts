@@ -1,6 +1,7 @@
 import { RpcInterceptor } from '@app/common';
 import { Controller, UseInterceptors } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
+import { CreateOrderDto } from 'apps/order/src/order/dto/create-order.dto';
 import { DeliveryStartedDto } from 'apps/order/src/order/dto/delivery-started.dto';
 import { OrderStatus } from 'apps/order/src/order/entity/order.entity';
 import { OrderService } from 'apps/order/src/order/order.service';
@@ -25,5 +26,10 @@ export class OrderController {
       payload.id,
       OrderStatus.deliveryStarted,
     );
+  }
+
+  @MessagePattern({ cmd: 'create_order' })
+  async createOrder(@Payload() createOrderDto: CreateOrderDto) {
+    return this.orderService.createOrder(createOrderDto);
   }
 }

@@ -26,8 +26,8 @@ export class OrderService {
     private readonly orderModel: Model<Order>,
   ) {}
 
-  async createOrder(createOrderDto: CreateOrderDto, token: string) {
-    const { productIds, address, payment } = createOrderDto;
+  async createOrder(createOrderDto: CreateOrderDto) {
+    const { productIds, address, payment, token } = createOrderDto;
     /**
      * 1. User: 사용자정보 갖고오기
      * 2. Product: 상품 정보 가져오기
