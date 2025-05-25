@@ -1,5 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { Authorization } from 'apps/gateway/src/auth/decorator/authorization.decorator';
+import { UserPayloadDto } from '@app/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { UserPayload } from 'apps/gateway/src/auth/decorator/user-payload.decorator';
+import { TokenGuard } from 'apps/gateway/src/auth/guard/token.guard';
 import { CreateOrderDto } from 'apps/gateway/src/order/dto/create-order.dto';
 import { OrderService } from './order.service';
 
@@ -8,10 +10,11 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
+  @UseGuards(TokenGuard)
   async createOrder(
-    @Authorization() token: string,
+    @UserPayload() userPayloadDto: UserPayloadDto,
     @Body() createOrderDto: CreateOrderDto,
   ) {
-    return this.orderService.createOrder(createOrderDto, token);
+    return this.orderService.createOrder(createOrderDto, userPayloadDto);
   }
 }

@@ -27,7 +27,7 @@ export class OrderService {
   ) {}
 
   async createOrder(createOrderDto: CreateOrderDto) {
-    const { productIds, address, payment, token } = createOrderDto;
+    const { productIds, address, payment, meta } = createOrderDto;
     /**
      * 1. User: 사용자정보 갖고오기
      * 2. Product: 상품 정보 가져오기
@@ -38,7 +38,7 @@ export class OrderService {
      * 7. Notification: 주문 상태 업데이트 하기
      * 8. Order: 결과 반환하기
      */
-    const user = await this.getUserFromToken(token);
+    const user = await this.getUserFromToken(meta.user.sub);
 
     const products = await this.getProductByIds(productIds);
 
@@ -65,18 +65,18 @@ export class OrderService {
     return this.orderModel.findById(order._id);
   }
 
-  private async getUserFromToken(token: string) {
-    // 1. User MS: JWT 검증
-    const tRes = await lastValueFrom(
-      this.userService.send({ cmd: 'parse_bearer_token' }, { token }),
-    );
+  private async getUserFromToken(userId: string) {
+    // // 1. User MS: JWT 검증
+    // const tRes = await lastValueFrom(
+    //   this.userService.send({ cmd: 'parse_bearer_token' }, { token }),
+    // );
 
-    if (tRes.status === 'error') {
-      throw new PaymentCancelledExcpetion(tRes);
-    }
+    // if (tRes.status === 'error') {
+    //   throw new PaymentCancelledExcpetion(tRes);
+    // }
 
-    // 2. User MS: 사용자 정보 가져오기
-    const userId = tRes.data.sub;
+    // // 2. User MS: 사용자 정보 가져오기
+    // const userId = tRes.data.sub;
     const uRes = await lastValueFrom(
       this.userService.send({ cmd: 'get_user_info' }, { userId }),
     );
