@@ -29,10 +29,13 @@ import * as Joi from 'joi';
         {
           name: NOTIFICATION_SERVICE,
           useFactory: (configService: ConfigService) => ({
-            transport: Transport.REDIS,
+            transport: Transport.RMQ,
             options: {
-              host: 'redis',
-              port: 6379,
+              urls: ['amqp://rabbitmq:5672'],
+              queue: 'notification_queue',
+              queueOptions: {
+                durable: false,
+              },
             },
           }),
           inject: [ConfigService],

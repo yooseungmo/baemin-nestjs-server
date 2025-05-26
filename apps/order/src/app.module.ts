@@ -32,10 +32,13 @@ import * as Joi from 'joi';
         {
           name: USER_SERVICE,
           useFactory: (configService: ConfigService) => ({
-            transport: Transport.REDIS,
+            transport: Transport.RMQ,
             options: {
-              host: 'redis',
-              port: 6379,
+              urls: ['amqp://rabbitmq:5672'],
+              queue: 'user_queue',
+              queueOptions: {
+                durable: false,
+              },
             },
           }),
           inject: [ConfigService],
@@ -43,10 +46,13 @@ import * as Joi from 'joi';
         {
           name: PRODUCT_SERVICE,
           useFactory: (configService: ConfigService) => ({
-            transport: Transport.REDIS,
+            transport: Transport.RMQ,
             options: {
-              host: 'redis',
-              port: 6379,
+              urls: ['amqp://rabbitmq:5672'],
+              queue: 'product_queue',
+              queueOptions: {
+                durable: false,
+              },
             },
           }),
           inject: [ConfigService],
@@ -54,10 +60,13 @@ import * as Joi from 'joi';
         {
           name: PAYMENT_SERVICE,
           useFactory: (configService: ConfigService) => ({
-            transport: Transport.REDIS,
+            transport: Transport.RMQ,
             options: {
-              host: 'redis',
-              port: 6379,
+              urls: ['amqp://rabbitmq:5672'],
+              queue: 'payment_queue',
+              queueOptions: {
+                durable: false,
+              },
             },
           }),
           inject: [ConfigService],
