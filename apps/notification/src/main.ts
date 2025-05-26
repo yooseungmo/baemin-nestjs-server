@@ -5,11 +5,10 @@ import { AppModule } from 'apps/notification/src/app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.TCP,
+    transport: Transport.REDIS,
     options: {
-      host: '0.0.0.0',
-      // port: parseInt(process.env.TCP_PORT) || 3000,
-      port: 3000,
+      host: 'redis',
+      port: 6379,
     },
   });
   await app.startAllMicroservices();

@@ -32,10 +32,10 @@ import * as Joi from 'joi';
         {
           name: USER_SERVICE,
           useFactory: (configService: ConfigService) => ({
-            transport: Transport.TCP,
+            transport: Transport.REDIS,
             options: {
-              host: configService.getOrThrow<string>('USER_HOST'),
-              port: configService.getOrThrow<number>('USER_TCP_PORT'),
+              host: 'redis',
+              port: 6379,
             },
           }),
           inject: [ConfigService],
@@ -43,10 +43,10 @@ import * as Joi from 'joi';
         {
           name: PRODUCT_SERVICE,
           useFactory: (configService: ConfigService) => ({
-            transport: Transport.TCP,
+            transport: Transport.REDIS,
             options: {
-              host: configService.getOrThrow<string>('PRODUCT_HOST'),
-              port: configService.getOrThrow<number>('PRODUCT_TCP_PORT'),
+              host: 'redis',
+              port: 6379,
             },
           }),
           inject: [ConfigService],
@@ -54,10 +54,10 @@ import * as Joi from 'joi';
         {
           name: PAYMENT_SERVICE,
           useFactory: (configService: ConfigService) => ({
-            transport: Transport.TCP,
+            transport: Transport.REDIS,
             options: {
-              host: configService.getOrThrow<string>('PAYMENT_HOST'),
-              port: configService.getOrThrow<number>('PAYMENT_TCP_PORT'),
+              host: 'redis',
+              port: 6379,
             },
           }),
           inject: [ConfigService],

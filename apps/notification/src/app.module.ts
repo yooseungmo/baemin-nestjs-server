@@ -1,5 +1,7 @@
+import { ORDER_SERVICE } from '@app/common';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { NotificationModule } from 'apps/notification/src/notification/notification.module';
 import * as Joi from 'joi';
@@ -18,7 +20,21 @@ import * as Joi from 'joi';
       }),
       inject: [ConfigService],
     }),
-
+    ClientsModule.registerAsync({
+      clients: [
+        {
+          name: ORDER_SERVICE,
+          useFactory: (configService: ConfigService) => ({
+            transport: Transport.REDIS,
+            options: {
+              host: 'redis',
+              port: 6379,
+            },
+          }),
+          inject: [ConfigService],
+        },
+      ],
+    }),
     NotificationModule,
   ],
 })
